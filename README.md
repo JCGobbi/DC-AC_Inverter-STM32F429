@@ -1,4 +1,4 @@
-# Ada MODBUS Protocol
+# DC-AC Inverter with STM32F429
 
 This repository contains Ada software for the implementation of a DC-AC 50/60 Hz inverter from 12 V to 220 VAC with a low frequency transformer. The sinusoidal wave is sinthesized with PWM modulation. There is no hardware project for this inverter.
 
