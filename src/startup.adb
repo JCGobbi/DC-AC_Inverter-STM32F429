@@ -40,12 +40,6 @@ package body StartUp is
                       Deadtime  => PWM_Deadtime,
                       Alignment => Center);
 
-      for P in PWM_Phase'Range loop
-         Set_Duty_Cycle (This => P,
-                         Value => 0.0);
-         Enable_Phase (P);
-      end loop;
-
       Initialized :=
          STM_Board.Is_Initialized and
          Inverter_ADC.Is_Initialized and

@@ -38,7 +38,6 @@ package body Inverter_PWM is
       Set_Counter_Mode (This => PWM_Timer_Ref.all,
                         Value => Counter_Mode);
 
-      --  TODO: Make inactive state configurable.
       Configure_BDTR (This                          => PWM_Timer_Ref.all,
                       Automatic_Output_Enabled      => False,
                       Break_Polarity                => High,
@@ -141,6 +140,12 @@ package body Inverter_PWM is
 
    procedure Start_PWM is
    begin
+      Reset_Sine_Step;
+      for P in PWM_Phase'Range loop
+         Set_Duty_Cycle (This  => P,
+                         Value => 0.0);
+         Enable_Phase (P);
+      end loop;
       Enable_Interrupt (This   => PWM_Timer_Ref.all,
                         Source => Timer_Update_Interrupt);
    end Start_PWM;
@@ -153,6 +158,12 @@ package body Inverter_PWM is
    begin
       Disable_Interrupt (This   => PWM_Timer_Ref.all,
                         Source => Timer_Update_Interrupt);
+      for P in PWM_Phase'Range loop
+         Disable_Phase (P);
+         Set_Duty_Cycle (This  => P,
+                         Value => 0.0);
+      end loop;
+      Reset_Sine_Step;
    end Stop_PWM;
 
    -------------------------
@@ -292,12 +303,6 @@ package body Inverter_PWM is
    begin
       Set_PWM_Gate_Power (Enabled => False);
       Stop_PWM;
-      for P in PWM_Phase'Range loop
-         Disable_Phase (P);
-         Set_Duty_Cycle (This => P,
-                         Value => 0.0);
-      end loop;
-      Reset_Sine_Step;
    end Safe_State;
    
    --------------------

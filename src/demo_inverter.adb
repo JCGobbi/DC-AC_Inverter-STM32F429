@@ -1,7 +1,6 @@
 with Ada.Real_Time; use Ada.Real_Time;
 
 with STM_Board;     use STM_Board;
-with Inverter_ADC;  use Inverter_ADC;
 with Inverter_PWM;  use Inverter_PWM;
 
 with Last_Chance_Handler; pragma Unreferenced (Last_Chance_Handler);
@@ -33,12 +32,6 @@ begin
    Initialize_PWM (Frequency => PWM_Frequency_Hz,
                    Deadtime  => PWM_Deadtime,
                    Alignment => Center);
-
-   for P in PWM_Phase'Range loop
-      Set_Duty_Cycle (This => P,
-                      Value => 0.0);
-      Enable_Phase (P);
-   end loop;
 
    --  Test if all peripherals are correctly initialized
    while not (STM_Board.Is_Initialized and Inverter_PWM.Is_Initialized)  loop
