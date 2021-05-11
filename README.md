@@ -1,6 +1,6 @@
 # DC-AC Inverter with STM32F429
 
-This repository contains Ada software for the implementation of a DC-AC 50/60 Hz inverter from 12 V to 220 VAC with a low frequency transformer. The sinusoidal wave is sinthesized with PWM modulation. There is no hardware project for this inverter.
+This repository contains Ada software for the implementation of a DC-AC 50/60 Hz inverter from 12 V to 220 VAC with a low frequency transformer. The sinusoidal wave is synthesized with PWM modulation. There is no hardware project for this inverter.
 
 The software uses the [Ada Drivers Library](https://www.github.com/Adacore/Ada_Drivers_Library) from [Adacore](https://www.adacore.com). The main board used for developing this software is the NUCLEO-F429ZI, from [ST Microelectronics](https://www.st.com), that has connectors for Arduino shields, ZIO and MORPHO expansion connector, so you may connect any Arduino shield on it and develop your own power inverter board. If you want to use other nucleo boards, do the **Project Wizard** that comes with the Ada Drivers Library choosing your board. You will need to change the hardware addresses of the `stm_board.ads` file inside the `src` folder to adapt to your board.
 
