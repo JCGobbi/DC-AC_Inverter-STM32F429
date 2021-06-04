@@ -59,7 +59,7 @@ package body Inverter_ADC is
          DMA_Mode       => Disabled,
          Sampling_Delay => Sampling_Delay_5_Cycles);  -- arbitrary
 
-      Enable_Interrupts (Sensor_ADC.all, Regular_Sequence_Conversion_Complete);
+      Enable_Interrupts (Sensor_ADC.all, Regular_Channel_Conversion_Complete);
       --  End of sequence generates an interrupt signalling all conversions
       --  are complete.
 
@@ -207,22 +207,24 @@ package body Inverter_ADC is
 
       procedure Sensor_ISR_Handler is
       begin
-         if Status (Sensor_ADC.all, Regular_Sequence_Conversion_Complete) then
-            if Interrupt_Enabled (Sensor_ADC.all, Regular_Sequence_Conversion_Complete) then
-               Clear_Interrupt_Pending (Sensor_ADC.all, Regular_Sequence_Conversion_Complete);
+         if Status (Sensor_ADC.all, Regular_Channel_Conversion_Complete) then
+            if Interrupt_Enabled (Sensor_ADC.all, Regular_Channel_Conversion_Complete) then
+               Clear_Interrupt_Pending (Sensor_ADC.all, Regular_Channel_Conversion_Complete);
                
                --  Save the ADC values into a buffer
-               for R in ADC_Reading'Range loop
-                  Regular_Samples(R) := Conversion_Value
-                                          (ADC_Reading_Settings(R).ADC_Entry.ADC.all);
-               end loop;
+               Regular_Samples(Rank) := Conversion_Value (Sensor_ADC.all);
+               if Rank = ADC_Reading'Last then
+                  Rank := ADC_Reading'First;
+               else
+                  Rank := ADC_Reading'Succ(Rank);
+               end if;
 
                --  Calculate the new Sine_Gain based on battery voltage
                Sine_Gain := Battery_Gain;
 
-            --  Testing the 5 kHz output with 1 Hz LED blinking. There are
-            --  three regular channel conversions, but one interrupt at the
-            --  the end of sequence, so this frequency is 5 kHz.
+            --  Testing the 5 kHz output with 1 Hz LED blinking. Because there
+            --  are three regular channel conversions, this frequency will be
+            --  three times greater.
                if Counter = 2_500 then
                   Set_Toggle (Blue_LED);
                   Counter := 0;

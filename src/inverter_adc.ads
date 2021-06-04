@@ -116,7 +116,9 @@ private
       pragma Interrupt_Priority (Sensor_ISR_Priority);
 
    private
-   
+
+      Rank : ADC_Reading := ADC_Reading'First;
+
       Counter : Integer := 0;
       --  For testing the output.
 
