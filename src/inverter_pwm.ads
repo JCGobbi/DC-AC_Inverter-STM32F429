@@ -1,4 +1,3 @@
-with HAL;          use HAL;
 with STM32.GPIO;   use STM32.GPIO;
 with STM32.Timers; use STM32.Timers;
 with STM32.PWM;    use STM32.PWM;
@@ -53,8 +52,9 @@ package Inverter_PWM is
    --  For 60 Hz we have 84 MHz / 30 kHz = 2800 ticks by each 30 kHz period,
    --  so the minimum duty cycle is 100 / 2800 = 0.0357 %.
 
-   subtype Deadtime_Range is Float range 0.0 .. 333.3e-9;
-   --  Maximum deadtime chosen is 1% of the PWM_Frequency_Hz = 0.01/30_000.
+   subtype Deadtime_Range is Float range 0.0 .. 400.0e-9;
+   --  Maximum deadtime permissible is 126 us.
+   --  Maximum deadtime chosen is 1% of the PWM_Frequency_Hz = 0.01/25_000.
    PWM_Deadtime : constant Deadtime_Range := 166.7e-9;
    --  The delay exists in the rising edges.
    --  It depends on the electronic circuit rise and fall times.

@@ -1,4 +1,5 @@
 with STM32_SVD;    use STM32_SVD;
+with HAL;          use HAL;
 with System;       use System;
 with STM32.Device; use STM32.Device;
 
@@ -9,15 +10,6 @@ package body Inverter_PWM is
    --  Returns the DTG bit-field for timer register BDTR such that
    --  the requested deadtime Time is obtained.
    --  Please refer to STM32F4 reference manual for details.
-
-   procedure Initialize_Gate
-      (Phase      : PWM_Phase;
-       Channel    : Timer_Channel;
-       Pin_H      : GPIO_Point;
-       Pin_L      : GPIO_Point;
-       Pin_AF     : STM32.GPIO_Alternate_Function;
-       Polarity   : Timer_Output_Compare_Polarity := High;
-       Idle_State : STM32.Timers.Timer_Capture_Compare_State := Disable);
 
    --------------------
    -- Initialize_PWM --
@@ -48,61 +40,25 @@ package body Inverter_PWM is
                       Deadtime_Generator            => Deadtime_Value (PWM_Timer_Ref.all,
                                                                        Deadtime));
 
-
       for P in PWM_Phase'Range loop
-         Initialize_Gate (Phase   => P,
-                          Channel => Gate_Phase_Settings (P).Channel,
-                          Pin_H   => Gate_Phase_Settings (P).Pin_H,
-                          Pin_L   => Gate_Phase_Settings (P).Pin_L,
-                          Pin_AF  => Gate_Phase_Settings (P).Pin_AF);
+         Modulators (P).Attach_PWM_Channel
+           (Generator                => PWM_Timer_Ref,
+            Channel                  => Gate_Phase_Settings (P).Channel,
+            Point                    => Gate_Phase_Settings (P).Pin_H,
+            Complementary_Point      => Gate_Phase_Settings (P).Pin_L,
+            PWM_AF                   => Gate_Phase_Settings (P).Pin_AF,
+            Polarity                 => High,
+            Idle_State               => Disable,
+            Complementary_Polarity   => High,
+            Complementary_Idle_State => Disable);
+         
+         Set_Output_Preload_Enable (This    => PWM_Timer_Ref.all,
+                                    Channel => Gate_Phase_Settings (P).Channel,
+                                    Enabled => True);
       end loop;
-
+      
       Initialized := True;
    end Initialize_PWM;
-
-   ---------------------
-   -- Initialize_Gate --
-   ---------------------
-
-   procedure Initialize_Gate
-      (Phase      : PWM_Phase;
-       Channel    : Timer_Channel;
-       Pin_H      : GPIO_Point;
-       Pin_L      : GPIO_Point;
-       Pin_AF     : STM32.GPIO_Alternate_Function;
-       Polarity   : Timer_Output_Compare_Polarity := High;
-       Idle_State : Timer_Capture_Compare_State := Disable)
-   is
-   begin
-
-      if Complementary_Outputs_Supported (This    => PWM_Timer_Ref.all,
-                                          Channel => Channel)
-      then
-         Modulators (Phase).Attach_PWM_Channel
-            (Generator                => PWM_Timer_Ref,
-             Channel                  => Channel,
-             Point                    => Pin_H,
-             Complementary_Point      => Pin_L,
-             PWM_AF                   => Pin_AF,
-             Polarity                 => Polarity,
-             Idle_State               => Idle_State,
-             Complementary_Polarity   => Polarity,
-             Complementary_Idle_State => Idle_State);
-      else
-         Modulators (Phase).Attach_PWM_Channel
-            (Generator                => PWM_Timer_Ref,
-             Channel                  => Channel,
-             Point                    => Pin_H,
-             PWM_AF                   => Pin_AF,
-             Polarity                 => Polarity);
-         --  Raise Timer_Complementary_Error
-         --  with "This timer/channel doesn't support complementary output.";
-      end if;
-
-      Set_Output_Preload_Enable (This    => PWM_Timer_Ref.all,
-                                 Channel => Channel,
-                                 Enabled => True);
-   end Initialize_Gate;
 
    ------------------
    -- Enable_Phase --
@@ -381,7 +337,7 @@ package body Inverter_PWM is
 
                --  Testing the 30 kHz output with 1 Hz LED blinking.
                if Counter = 15_000 then
-                  Set_Toggle (Red_LED);
+                  Set_Toggle (Green_LED);
                   Counter := 0;
                end if;
                Counter := Counter + 1;

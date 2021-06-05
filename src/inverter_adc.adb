@@ -36,7 +36,6 @@ package body Inverter_ADC is
       --  Initialize ADC mode
       Enable_Clock (Sensor_ADC.all);
       Reset_All_ADC_Units;
-      Disable (Sensor_ADC.all);
 
       Configure_Unit
         (Sensor_ADC.all,
