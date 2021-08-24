@@ -1,9 +1,0 @@
-{
-    "editor.tabSize": 3,
-
-    "ada.projectFile": "inverter.gpr",
-    "ada.scenarioVariables": {
-        "BUILD_MODE": "debug"
-    },
-    "ada.defaultCharset": "utf-8",
-}
