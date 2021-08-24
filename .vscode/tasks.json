@@ -110,6 +110,29 @@
          "problemMatcher": []
       },
       //
+      // Ada: flash elf file to board with STM32CubeProgrammer
+      //
+      {
+         "label": "Ada: flash elf file to board with STM32CubeProgrammer",
+         "type": "shell",
+         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "args": [
+            "--connect",
+            "port=SWD",
+            "freq=4000",
+            "ap=0",
+            "mode=UR",
+            "--write",
+            "exec/*.elf",
+            "-rst"
+         ],
+         "options": {
+            "cwd": "${workspaceFolder}"
+         },
+         "group": "test",
+         "problemMatcher": []
+      },
+      //
       // Ada: convert elf file to hex file
       //
       {
@@ -144,6 +167,31 @@
             "ihex",
             "write",
             "exec/main.hex"
+         ],
+         "options": {
+            "cwd": "${workspaceFolder}"
+         },
+         "group": "test",
+         "problemMatcher": []
+      },
+      //
+      // Ada: flash hex file to board with STM32CubeProgrammer
+      //
+      {
+         "label": "Ada: flash hex file to board with STM32CubeProgrammer",
+         "dependsOrder": "sequence",
+         "dependsOn": ["Ada: convert elf file to hex file"],
+         "type": "shell",
+         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "args": [
+            "--connect",
+            "port=SWD",
+            "freq=4000",
+            "ap=0",
+            "mode=UR",
+            "--write",
+            "exec/main.hex",
+            "-rst"
          ],
          "options": {
             "cwd": "${workspaceFolder}"
@@ -187,6 +235,32 @@
             "write",
             "exec/main.bin",
             "0x08000000"
+         ],
+         "options": {
+            "cwd": "${workspaceFolder}"
+         },
+         "group": "test",
+         "problemMatcher": []
+      },
+      //
+      // Ada: flash bin file to board with STM32CubeProgrammer
+      //
+      {
+         "label": "Ada: flash bin file to board with STM32CubeProgrammer",
+         "dependsOrder": "sequence",
+         "dependsOn": ["Ada: convert elf file to hex file"],
+         "type": "shell",
+         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "args": [
+            "--connect",
+            "port=SWD",
+            "freq=4000",
+            "ap=0",
+            "mode=UR",
+            "--write",
+            "exec/main.bin",
+            "0x08000000",
+            "-rst"
          ],
          "options": {
             "cwd": "${workspaceFolder}"
