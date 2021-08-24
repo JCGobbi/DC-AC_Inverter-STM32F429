@@ -116,10 +116,12 @@ package Inverter_PWM is
    --  Initialize the timer peripheral for PWM.
    --  Each phase needs to be enabled manually after this.
 
-   procedure Enable_Phase (This : PWM_Phase);
+   procedure Enable_Phase (This : PWM_Phase)
+   with inline;
    --  Enable PWM generation for the specified phase.
 
-   procedure Disable_Phase (This : PWM_Phase);
+   procedure Disable_Phase (This : PWM_Phase)
+   with inline;
    --  Disable PWM generation for the specified phase.
 
    procedure Start_PWM

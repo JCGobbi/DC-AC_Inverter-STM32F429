@@ -66,13 +66,8 @@ package body Inverter_PWM is
 
    procedure Enable_Phase (This : PWM_Phase) is
    begin
-      if Complementary_Outputs_Supported
-         (This    => PWM_Timer_Ref.all,
-          Channel => Gate_Phase_Settings (This).Channel)
-      then
-         Modulators (This).Enable_Complementary_Output;
-      end if;
       Modulators (This).Enable_Output;
+      Modulators (This).Enable_Complementary_Output;
    end Enable_Phase;
 
    -------------------
@@ -81,13 +76,8 @@ package body Inverter_PWM is
 
    procedure Disable_Phase (This : PWM_Phase) is
    begin
-      if Complementary_Outputs_Supported
-         (This    => PWM_Timer_Ref.all,
-          Channel => Gate_Phase_Settings (This).Channel)
-      then
-         Modulators (This).Disable_Complementary_Output;
-      end if;
       Modulators (This).Disable_Output;
+      Modulators (This).Disable_Complementary_Output;
    end Disable_Phase;
 
    ---------------
