@@ -147,8 +147,7 @@ package body Inverter_PWM is
    is
       Pulse : UInt16;
    begin
-      Pulse := UInt16 (Gain / Gain_Range'Last * 
-                       Float(Amplitude) / Float(Table_Amplitude'Last) *
+      Pulse := UInt16 (Gain * Float(Amplitude) / Float(Table_Amplitude'Last) *
                        Float(Current_Autoreload (PWM_Timer_Ref.all)));
       Set_Compare_Value
         (This => PWM_Timer_Ref.all,
@@ -327,7 +326,7 @@ package body Inverter_PWM is
 
                --  Testing the 30 kHz output with 1 Hz LED blinking.
                if Counter = 15_000 then
-                  Set_Toggle (Green_LED);
+                  Set_Toggle (Blue_LED);
                   Counter := 0;
                end if;
                Counter := Counter + 1;
