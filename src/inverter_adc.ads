@@ -3,7 +3,6 @@ with STM32.GPIO;   use STM32.GPIO;
 with STM32.ADC;    use STM32.ADC;
 
 with STM_Board;    use STM_Board;
-with Inverter_PWM; use Inverter_PWM;
 
 package Inverter_ADC is
    --  Performs analog to digital conversions in a timed manner.
@@ -14,33 +13,33 @@ package Inverter_ADC is
    Sensor_Frequency_Hz : constant Frequency_Hz := 5_000.0;
    -- Timer PWM frequency that controls start of ADC convertion.
 
-   subtype Measure_E is Float;
+   subtype Voltage is Float;
    --  Represents an electric measure.
 
-   ADC_Vref : constant Measure_E := 3.3;
+   ADC_Vref : constant Voltage := 3.3;
    --  ADC full scale voltage.
 
-   Battery_V : constant Measure_E := 12.0;
+   Battery_V : constant Voltage := 12.0;
    --  Battery nominal voltage.
-   subtype Battery_V_Range is Measure_E range (Battery_V * 0.8) .. (Battery_V * 1.2);
+   subtype Battery_V_Range is Voltage range (Battery_V * 0.8) .. (Battery_V * 1.2);
    --  Battery voltage tolerance is Battery_V ± 20%.
 
    Battery_Relation : Float := 10_000.0 / 90_900.0; -- 10 kΩ / 90.9 kΩ
    --  Resistive relation between the measured ADC input and the battery
    --  voltage. This depends on the electronic circuitry.
 
-   Inverter_Power : constant Measure_E := 300.0;
+   Inverter_Power : constant Voltage := 300.0;
    --  Inverter nominal electric power.
 
-   Battery_I : constant Measure_E := Inverter_Power / Battery_V_Range'First;
+   Battery_I : constant Voltage := Inverter_Power / Battery_V_Range'First;
    --  Battery nominal current with maximum inverter power and
    --  minimum battery voltage.
-   subtype Battery_I_Range is Measure_E range 0.0 .. (Battery_I * 1.1);
+   subtype Battery_I_Range is Voltage range 0.0 .. (Battery_I * 1.1);
    --  Battery current tolerance is Battery_I + 10%.
 
-   Output_V : constant Measure_E := 220.0;
+   Output_V : constant Voltage := 220.0;
    --  AC output RMS voltage.
-   subtype Output_V_Range is Measure_E range (Output_V * 0.9) .. (Output_V * 1.1);
+   subtype Output_V_Range is Voltage range (Output_V * 0.9) .. (Output_V * 1.1);
    --  AC ouput voltage tolerance is Output_V ± 10%.
 
    Output_Relation : Float :=  10_000.0 / 90_900.0; -- 10 kΩ / 90.9 kΩ
@@ -54,14 +53,18 @@ package Inverter_ADC is
    procedure Initialize_ADC;
    --  Initialize the ADCs.
 
-   function Get_Sample (Reading : in ADC_Reading) return Measure_E
+   function Get_Sample (Reading : in ADC_Reading) return Voltage
    with
       Pre => Is_Initialized;
    --  Get the specified ADC reading.
 
+   subtype Gain_Range is Float range 0.0 .. 1.0;
+   --  For correcting battery voltage and AC output variation.
+   Sine_Gain : Gain_Range := 0.0;
+
    function Battery_Gain
      (V_Setpoint : Battery_V_Range := Battery_V_Range'First;
-      V_Actual   : Measure_E := Get_Sample (V_Battery)) return Gain_Range;
+      V_Actual   : Voltage := Get_Sample (V_Battery)) return Gain_Range;
    --  Calculate the gain of the sinusoid as a function of the
    --  battery voltage.
 

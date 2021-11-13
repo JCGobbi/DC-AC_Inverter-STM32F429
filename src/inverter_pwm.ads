@@ -3,6 +3,7 @@ with STM32.Timers; use STM32.Timers;
 with STM32.PWM;    use STM32.PWM;
 
 with STM_Board;    use STM_Board;
+with Inverter_ADC; use Inverter_ADC;
 
 package Inverter_PWM is
 
@@ -33,10 +34,6 @@ package Inverter_PWM is
    subtype Table_Amplitude is Integer range 0 .. 10_000;
    --  Values inside 14 bits (0 - 16_384).
 
-   subtype Gain_Range is Float range 0.0 .. 1.0;
-   --  For correcting battery voltage and AC output variation.
-   Sine_Gain : Gain_Range := 0.0;
-
    subtype Duty_Cycle is Float range 0.0 .. 100.0;
 
    --  The upload frequency of the duty cycle is defined by the number of points
@@ -60,50 +57,6 @@ package Inverter_PWM is
    --  It depends on the electronic circuit rise and fall times.
    --  166.7e-9 * 30 kHz * 100 = 0.5% of the total period,
    --  0.5% of 2800 ticks = 14 ticks.
-
-   subtype Sine_Step_Range is Natural range 1 .. 250;
-   --  Number of steps for the half sine table.
-
-   --  The table for sine generation is produced knowing the number of points
-   --  to complete 1/4 sine period. The semi-sinusoid, or 1/2 sine period is
-   --  completed with these same points in reverse order.
-   --  The equation which defines each point is:
-   --
-   --  D = A * sin(pi/2 * x/N)
-   --  D = Duty cycle at a given discrete point;
-   --  A = Signal amplitude of the maximum duty cycle. We adopt 10_000.
-   --  pi/2 = 1/4 of the sine period
-   --  x = Step number
-   --  N = Number of points = 125
-
-   --  Sine table with 125 points from 0 to 10000, in direct and reverse order
-   --  to create a semi-sinusoid with 250 points.
-   Sine_Table : constant array (Sine_Step_Range) of Table_Amplitude :=
-                (126, 251, 377, 502, 628, 753, 879, 1004, 1129, 1253,
-                 1378, 1502, 1626, 1750, 1874, 1997, 2120, 2243, 2365, 2487,
-                 2608, 2730, 2850, 2970, 3090, 3209, 3328, 3446, 3564, 3681,
-                 3798, 3914, 4029, 4144, 4258, 4371, 4484, 4596, 4707, 4818,
-                 4927, 5036, 5144, 5252, 5358, 5464, 5569, 5673, 5776, 5878,
-                 5979, 6079, 6179, 6277, 6374, 6471, 6566, 6660, 6753, 6845,
-                 6937, 7026, 7115, 7203, 7290, 7375, 7459, 7543, 7624, 7705,
-                 7785, 7863, 7940, 8016, 8090, 8163, 8235, 8306, 8375, 8443,
-                 8510, 8575, 8639, 8702, 8763, 8823, 8881, 8938, 8994, 9048,
-                 9101, 9152, 9202, 9251, 9298, 9343, 9387, 9430, 9471, 9511,
-                 9549, 9585, 9620, 9654, 9686, 9716, 9745, 9773, 9799, 9823,
-                 9846, 9867, 9887, 9905, 9921, 9936, 9950, 9961, 9972, 9980,
-                 9987, 9993, 9997, 9999, 10000, 9999, 9997, 9993, 9987, 9980,
-                 9972, 9961, 9950, 9936, 9921, 9905, 9887, 9867, 9846, 9823,
-                 9799, 9773, 9745, 9716, 9686, 9654, 9620, 9585, 9549, 9511,
-                 9471, 9430, 9387, 9343, 9298, 9251, 9202, 9152, 9101, 9048,
-                 8994, 8938, 8881, 8823, 8763, 8702, 8639, 8575, 8510, 8443,
-                 8375, 8306, 8235, 8163, 8090, 8016, 7940, 7863, 7785, 7705,
-                 7624, 7543, 7459, 7375, 7290, 7203, 7115, 7026, 6937, 6845,
-                 6753, 6660, 6566, 6471, 6374, 6277, 6179, 6079, 5979, 5878,
-                 5776, 5673, 5569, 5464, 5358, 5252, 5144, 5036, 4927, 4818,
-                 4707, 4596, 4484, 4371, 4258, 4144, 4029, 3914, 3798, 3681,
-                 3564, 3446, 3328, 3209, 3090, 2970, 2850, 2730, 2608, 2487,
-                 2365, 2243, 2120, 1997, 1874, 1750, 1626, 1502, 1378, 1253,
-                 1129, 1004, 879, 753, 628, 502, 377, 251, 126, 0);
 
    -----------------------------
    -- Procedures and function --
@@ -176,8 +129,52 @@ private
 
    Initialized : Boolean := False;
 
-   Sine_Step : Sine_Step_Range := 250;
+   subtype Sine_Step_Range is Natural range 1 .. 250;
+   --  Number of steps for the half sine table.
+
+   Sine_Step : Sine_Step_Range := Sine_Step_Range'Last;
    -- The table last step value is 0.
+
+   --  The table for sine generation is produced knowing the number of points
+   --  to complete 1/4 sine period. The semi-sinusoid, or 1/2 sine period is
+   --  completed with these same points in reverse order.
+   --  The equation which defines each point is:
+   --
+   --  D = A * sin(pi/2 * x/N)
+   --  D = Duty cycle at a given discrete point;
+   --  A = Signal amplitude of the maximum duty cycle. We adopt 10_000.
+   --  pi/2 = 1/4 of the sine period
+   --  x = Step number
+   --  N = Number of points = 125
+
+   --  Sine table with 125 points from 0 to 10000, in direct and reverse order
+   --  to create a semi-sinusoid with 250 points.
+   Sine_Table : constant array (Sine_Step_Range) of Table_Amplitude :=
+                (126, 251, 377, 502, 628, 753, 879, 1004, 1129, 1253,
+                 1378, 1502, 1626, 1750, 1874, 1997, 2120, 2243, 2365, 2487,
+                 2608, 2730, 2850, 2970, 3090, 3209, 3328, 3446, 3564, 3681,
+                 3798, 3914, 4029, 4144, 4258, 4371, 4484, 4596, 4707, 4818,
+                 4927, 5036, 5144, 5252, 5358, 5464, 5569, 5673, 5776, 5878,
+                 5979, 6079, 6179, 6277, 6374, 6471, 6566, 6660, 6753, 6845,
+                 6937, 7026, 7115, 7203, 7290, 7375, 7459, 7543, 7624, 7705,
+                 7785, 7863, 7940, 8016, 8090, 8163, 8235, 8306, 8375, 8443,
+                 8510, 8575, 8639, 8702, 8763, 8823, 8881, 8938, 8994, 9048,
+                 9101, 9152, 9202, 9251, 9298, 9343, 9387, 9430, 9471, 9511,
+                 9549, 9585, 9620, 9654, 9686, 9716, 9745, 9773, 9799, 9823,
+                 9846, 9867, 9887, 9905, 9921, 9936, 9950, 9961, 9972, 9980,
+                 9987, 9993, 9997, 9999, 10000, 9999, 9997, 9993, 9987, 9980,
+                 9972, 9961, 9950, 9936, 9921, 9905, 9887, 9867, 9846, 9823,
+                 9799, 9773, 9745, 9716, 9686, 9654, 9620, 9585, 9549, 9511,
+                 9471, 9430, 9387, 9343, 9298, 9251, 9202, 9152, 9101, 9048,
+                 8994, 8938, 8881, 8823, 8763, 8702, 8639, 8575, 8510, 8443,
+                 8375, 8306, 8235, 8163, 8090, 8016, 7940, 7863, 7785, 7705,
+                 7624, 7543, 7459, 7375, 7290, 7203, 7115, 7026, 6937, 6845,
+                 6753, 6660, 6566, 6471, 6374, 6277, 6179, 6079, 5979, 5878,
+                 5776, 5673, 5569, 5464, 5358, 5252, 5144, 5036, 4927, 4818,
+                 4707, 4596, 4484, 4371, 4258, 4144, 4029, 3914, 3798, 3681,
+                 3564, 3446, 3328, 3209, 3090, 2970, 2850, 2730, 2608, 2487,
+                 2365, 2243, 2120, 1997, 1874, 1750, 1626, 1502, 1378, 1253,
+                 1129, 1004, 879, 753, 628, 502, 377, 251, 126, 0);
 
    PWM_Timer_Ref : access Timer := PWM_Timer'Access;
 

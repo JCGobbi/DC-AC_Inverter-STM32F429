@@ -3,7 +3,7 @@ with STM32.PWM;            use STM32.PWM;
 
 package body Inverter_ADC is
 
-   function To_Voltage (Value : in UInt16) return Measure_E
+   function To_Voltage (Value : in UInt16) return Voltage
    with
       Inline;
 
@@ -98,9 +98,9 @@ package body Inverter_ADC is
    -- To_Voltage --
    ----------------
 
-   function To_Voltage (Value : in UInt16) return Measure_E is
+   function To_Voltage (Value : in UInt16) return Voltage is
    begin
-      return Measure_E (ADC_V_Per_Lsb * Float (Value));
+      return Voltage (ADC_V_Per_Lsb * Float (Value));
    end To_Voltage;
 
    ----------------
@@ -108,7 +108,7 @@ package body Inverter_ADC is
    ----------------
 
    function Get_Sample (Reading : in ADC_Reading)
-      return Measure_E is
+      return Voltage is
    begin
       if Reading'Valid then
          return To_Voltage (Regular_Samples(Reading));
@@ -126,7 +126,7 @@ package body Inverter_ADC is
 
    function Battery_Gain
      (V_Setpoint : Battery_V_Range := Battery_V_Range'First;
-      V_Actual   : Measure_E := Get_Sample (V_Battery))
+      V_Actual   : Voltage := Get_Sample (V_Battery))
    return Gain_Range is
 
    begin
@@ -146,7 +146,7 @@ package body Inverter_ADC is
    --------------------
 
    function Test_V_Battery return Boolean is
-      V_Actual : constant Measure_E := Get_Sample (Reading => V_Battery);
+      V_Actual : constant Voltage := Get_Sample (Reading => V_Battery);
    begin
       if (V_Actual / Battery_Relation < Battery_V_Range'First or
           V_Actual / Battery_Relation > Battery_V_Range'Last)
@@ -162,7 +162,7 @@ package body Inverter_ADC is
    --------------------
 
    function Test_I_Battery return Boolean is
-      V_Actual : constant Measure_E := Get_Sample (Reading => I_Battery);
+      V_Actual : constant Voltage := Get_Sample (Reading => I_Battery);
    begin
       if V_Actual > Battery_I_Range'Last then
          return False;
@@ -176,7 +176,7 @@ package body Inverter_ADC is
    -------------------
 
    function Test_V_Output return Boolean is
-      V_Actual : constant Measure_E := Get_Sample (Reading => V_Output);
+      V_Actual : constant Voltage := Get_Sample (Reading => V_Output);
    begin
       if (V_Actual / Output_Relation < Output_V_Range'First or
           V_Actual / Output_Relation > Output_V_Range'Last)

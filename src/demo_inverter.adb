@@ -1,6 +1,7 @@
 with Ada.Real_Time; use Ada.Real_Time;
 
 with STM_Board;     use STM_Board;
+with Inverter_ADC;  use Inverter_ADC;
 with Inverter_PWM;  use Inverter_PWM;
 
 with Last_Chance_Handler; pragma Unreferenced (Last_Chance_Handler);
