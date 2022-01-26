@@ -14,10 +14,9 @@ project Inverter is
    for Exec_Dir use "exec";
    for Create_Missing_Dirs use "True";
 
-   -- Executable files to choose:
-   -- demo_inverter.adb,
-   -- main.adb.
-   for Main use ("demo_inverter.adb");
+   --  Executable files to choose:
+   --  demo_inverter.adb, main.adb.
+   for Main use ("main.adb");
 
    case RTS is
       when "ravenscar-sfp" =>
@@ -33,6 +32,12 @@ project Inverter is
       for Executable("main.adb") use "inverter";
       for Executable_Suffix use ".elf";
    end Builder;
+
+   package Linker is
+      for Default_Switches ("Ada") use
+         ("-Wl,--gc-sections",  --  Don't link unused code sections
+          "-Wl,--print-gc-sections");  --  List removed unused code sections
+   end Linker;
 
    package Ide is
       for Debugger_Command use "arm-eabi-gdb";
