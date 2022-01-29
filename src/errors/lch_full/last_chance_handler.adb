@@ -42,7 +42,7 @@ package body Last_Chance_Handler is
    -- Last_Chance_Handler --
    -------------------------
 
-   procedure Last_Chance_Handler (Error : Exception_ID) is
+   procedure Last_Chance_Handler (Error : Exception_Id) is
       pragma Unreferenced (Error);
    begin
       STM_Board.All_LEDs_Off;
