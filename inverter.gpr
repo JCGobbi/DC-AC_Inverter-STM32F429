@@ -36,10 +36,13 @@ project Inverter is
    package Linker is
       for Default_Switches ("Ada") use
          ("-Wl,--gc-sections",  --  Don't link unused code sections
-          "-Wl,--print-gc-sections");  --  List removed unused code sections
+          "-Wl,--print-gc-sections",  --  List removed unused code sections
+          "-Wl,--print-memory-usage");
    end Linker;
 
    package Ide is
+      for Gnat use "arm-eabi-gnat";
+      for Gnatlist use "arm-eabi-gnatls";
       for Debugger_Command use "arm-eabi-gdb";
       for Program_Host use "localhost:4242";
       for Communication_Protocol use "remote";
