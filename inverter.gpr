@@ -20,8 +20,10 @@ project Inverter is
 
    case RTS is
       when "ravenscar-sfp" =>
+         for Runtime ("Ada") use "ravenscar-sfp-stm32f429disco";
          for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_sfp");
       when "ravenscar-full" =>
+         for Runtime ("Ada") use "ravenscar-full-stm32f429disco";
          for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_full");
    end case;
 

@@ -2,7 +2,7 @@
 library project Ada_Drivers_Library is
 
    type Build_Type is ("Debug", "Production");
-   Build : Build_Type := external ("ADL_BUILD", "Debug");
+   Build : Build_Type := external ("ADL_BUILD", "Production");
 
    type Build_Checks_Type is ("Disabled", "Enabled");
    Build_Checks : Build_Checks_Type := external ("ADL_BUILD_CHECKS", "Enabled");
@@ -52,7 +52,6 @@ library project Ada_Drivers_Library is
          "-fdata-sections");  -- Create a linker section for each data
    end Compiler;
 
-
    for Languages use ("Ada");
    for Create_Missing_Dirs use "True";
    for Object_Dir use "obj_" & Build;
@@ -62,7 +61,7 @@ library project Ada_Drivers_Library is
 
    Linker_Switches := ();
    for Target use "arm-eabi";
-   for Runtime ("Ada") use "ravenscar-sfp-stm32f429disco";
+   for Runtime ("Ada") use Project'Runtime ("Ada");
 
    package Device_Configuration is
       for CPU_Name use "ARM Cortex-M4F";
