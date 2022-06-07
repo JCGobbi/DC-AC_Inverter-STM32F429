@@ -26,7 +26,7 @@ package body Inverter_PWM is
    begin
       Configure_PWM_Timer (Generator    => PWM_Timer_Ref,
                            Frequency    => UInt32 (Frequency));
-      
+
       Set_Counter_Mode (This => PWM_Timer_Ref.all,
                         Value => Counter_Mode);
 
@@ -51,12 +51,12 @@ package body Inverter_PWM is
             Idle_State               => Disable,
             Complementary_Polarity   => High,
             Complementary_Idle_State => Disable);
-         
+
          Set_Output_Preload_Enable (This    => PWM_Timer_Ref.all,
                                     Channel => Gate_Phase_Settings (P).Channel,
                                     Enabled => True);
       end loop;
-      
+
       Initialized := True;
    end Initialize_PWM;
 
@@ -118,7 +118,7 @@ package body Inverter_PWM is
 
    function Get_Duty_Resolution return Duty_Cycle is
    begin
-      return Duty_Cycle(100.0 / Float(Current_Autoreload (PWM_Timer_Ref.all)));
+      return Duty_Cycle (100.0 / Float (Current_Autoreload (PWM_Timer_Ref.all)));
    end Get_Duty_Resolution;
 
    --------------------
@@ -130,7 +130,7 @@ package body Inverter_PWM is
    is
       Pulse : UInt16;
    begin
-      Pulse := UInt16 (Value * Float(Current_Autoreload (PWM_Timer_Ref.all)) / 100.0);
+      Pulse := UInt16 (Value * Float (Current_Autoreload (PWM_Timer_Ref.all)) / 100.0);
       Set_Compare_Value
         (This => PWM_Timer_Ref.all,
          Channel => Gate_Phase_Settings (This).Channel,
@@ -147,8 +147,8 @@ package body Inverter_PWM is
    is
       Pulse : UInt16;
    begin
-      Pulse := UInt16 (Gain * Float(Amplitude) / Float(Table_Amplitude'Last) *
-                       Float(Current_Autoreload (PWM_Timer_Ref.all)));
+      Pulse := UInt16 (Gain * Float (Amplitude) / Float (Table_Amplitude'Last) *
+                       Float (Current_Autoreload (PWM_Timer_Ref.all)));
       Set_Compare_Value
         (This => PWM_Timer_Ref.all,
          Channel => Gate_Phase_Settings (This).Channel,
@@ -249,7 +249,7 @@ package body Inverter_PWM is
       Set_PWM_Gate_Power (Enabled => False);
       Stop_PWM;
    end Safe_State;
-   
+
    --------------------
    -- Is_Initialized --
    --------------------
@@ -298,10 +298,10 @@ package body Inverter_PWM is
          if Status (PWM_Timer, Timer_Update_Indicated) then
             if Interrupt_Enabled (PWM_Timer, Timer_Update_Interrupt) then
                Clear_Pending_Interrupt (PWM_Timer, Timer_Update_Interrupt);
-               
+
                if (Semi_Senoid = False) then --  First half cycle
                   Set_Duty_Cycle (This      => A,
-                                  Amplitude => Sine_Table(Sine_Step),
+                                  Amplitude => Sine_Table (Sine_Step),
                                   Gain      => Sine_Gain);
                   --  Not necessary because the last value of B amplitude was 0
                   --  Set_Duty_Cycle (This      => B,
@@ -309,7 +309,7 @@ package body Inverter_PWM is
                   --                  Gain      => Gain_Range'First); --  Value 0
                else --  Second half cycle
                   Set_Duty_Cycle (This      => B,
-                                  Amplitude => Sine_Table(Sine_Step),
+                                  Amplitude => Sine_Table (Sine_Step),
                                   Gain      => Sine_Gain);
                   --  Not necessary because the last value of A amplitude was 0
                   --  Set_Duty_Cycle (This      => A,
@@ -321,7 +321,7 @@ package body Inverter_PWM is
                   Sine_Step := 1;
                   Semi_Senoid := not Semi_Senoid;
                else
-                  Sine_Step := Sine_Step +1;
+                  Sine_Step := Sine_Step + 1;
                end if;
 
                --  Testing the 30 kHz output with 1 Hz LED blinking.

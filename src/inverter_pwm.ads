@@ -103,7 +103,7 @@ package Inverter_PWM is
 
    procedure Set_PWM_Gate_Power (Enabled : in Boolean)
    with
-      Pre => (if Enabled = False then STM_Board.Is_Initialized 
+      Pre => (if Enabled = False then STM_Board.Is_Initialized
               else Is_Initialized and STM_Board.Is_Initialized);
    --  Enable or disable the output of the gate drivers.
 
@@ -133,7 +133,7 @@ private
    --  Number of steps for the half sine table.
 
    Sine_Step : Sine_Step_Range := Sine_Step_Range'Last;
-   -- The table last step value is 0.
+   --  The table last step value is 0.
 
    --  The table for sine generation is produced knowing the number of points
    --  to complete 1/4 sine period. The semi-sinusoid, or 1/2 sine period is
@@ -209,7 +209,7 @@ private
 
       Semi_Senoid : Boolean := False;
       --  Defines False = 1'st half sinusoid, True = 2'nd half sinusoid.
-   
+
       procedure PWM_ISR_Handler with
         Attach_Handler => PWM_Interrupt;
 

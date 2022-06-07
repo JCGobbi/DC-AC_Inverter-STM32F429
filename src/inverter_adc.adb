@@ -4,8 +4,7 @@ with STM32.PWM;            use STM32.PWM;
 package body Inverter_ADC is
 
    function To_Voltage (Value : in UInt16) return Voltage
-   with
-      Inline;
+     with Inline;
 
    procedure Initialize_ADC_Timer;
    --  Initialize the timer to start ADCs convertions.
@@ -23,7 +22,7 @@ package body Inverter_ADC is
                Sample_Time => Sample_480_Cycles),
          3 => (Channel     => ADC_Output_V_Point.Channel,
                Sample_Time => Sample_480_Cycles));
-      
+
    begin
 
       --  Initialize GPIO for analog input
@@ -69,7 +68,7 @@ package body Inverter_ADC is
       Initialize_ADC_Timer;
 
       Initialized := True;
-   End Initialize_ADC;
+   end Initialize_ADC;
 
    --------------------------
    -- Initialize_ADC_Timer --
@@ -82,7 +81,7 @@ package body Inverter_ADC is
    begin
 
       Configure_PWM_Timer (Generator => Sensor_Timer'Access,
-                           Frequency => UInt32(Sensor_Frequency_Hz));
+                           Frequency => UInt32 (Sensor_Frequency_Hz));
 
       ADC_Trigger.Attach_PWM_Channel (Generator => Sensor_Timer'Access,
                                       Channel   => Sensor_Timer_Channel,
@@ -111,7 +110,7 @@ package body Inverter_ADC is
       return Voltage is
    begin
       if Reading'Valid then
-         return To_Voltage (Regular_Samples(Reading));
+         return To_Voltage (Regular_Samples (Reading));
       else
          return 0.0;
       end if;
@@ -209,13 +208,13 @@ package body Inverter_ADC is
          if Status (Sensor_ADC.all, Regular_Channel_Conversion_Complete) then
             if Interrupt_Enabled (Sensor_ADC.all, Regular_Channel_Conversion_Complete) then
                Clear_Interrupt_Pending (Sensor_ADC.all, Regular_Channel_Conversion_Complete);
-               
+
                --  Save the ADC values into a buffer
-               Regular_Samples(Rank) := Conversion_Value (Sensor_ADC.all);
+               Regular_Samples (Rank) := Conversion_Value (Sensor_ADC.all);
                if Rank = ADC_Reading'Last then
                   Rank := ADC_Reading'First;
                else
-                  Rank := ADC_Reading'Succ(Rank);
+                  Rank := ADC_Reading'Succ (Rank);
                end if;
 
                --  Calculate the new Sine_Gain based on battery voltage

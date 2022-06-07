@@ -11,7 +11,7 @@ package Inverter_ADC is
    --  corrects the duty cycle for variations in battery voltage.
 
    Sensor_Frequency_Hz : constant Frequency_Hz := 5_000.0;
-   -- Timer PWM frequency that controls start of ADC convertion.
+   --  Timer PWM frequency that controls start of ADC convertion.
 
    subtype Voltage is Float;
    --  Represents an electric measure.

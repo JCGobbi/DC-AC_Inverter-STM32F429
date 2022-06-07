@@ -46,7 +46,7 @@ package body StartUp is
          Inverter_ADC.Is_Initialized and
          Inverter_PWM.Is_Initialized;
 
-   End Initialize;
+   end Initialize;
 
    --------------------------
    -- Wait_Until_V_Battery --
