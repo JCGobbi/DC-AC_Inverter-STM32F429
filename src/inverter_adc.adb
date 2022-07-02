@@ -1,10 +1,8 @@
 with STM32.Device;         use STM32.Device;
 with STM32.PWM;            use STM32.PWM;
+with Inverter_PWM;
 
 package body Inverter_ADC is
-
-   function To_Voltage (Value : in UInt16) return Voltage
-     with Inline;
 
    procedure Initialize_ADC_Timer;
    --  Initialize the timer to start ADCs convertions.
@@ -94,34 +92,19 @@ package body Inverter_ADC is
    end Initialize_ADC_Timer;
 
    ----------------
-   -- To_Voltage --
-   ----------------
-
-   function To_Voltage (Value : in UInt16) return Voltage is
-   begin
-      return Voltage (ADC_V_Per_Lsb * Float (Value));
-   end To_Voltage;
-
-   ----------------
    -- Get_Sample --
    ----------------
 
    function Get_Sample (Reading : in ADC_Reading)
       return Voltage is
    begin
-      if Reading'Valid then
-         return To_Voltage (Regular_Samples (Reading));
-      else
-         return 0.0;
-      end if;
+      --  Convert the UInt16 ADC value to Voltage (Float).
+      return Voltage (Float (Regular_Samples (Reading)) * ADC_V_Per_Lsb);
    end Get_Sample;
 
    ------------------
    -- Battery_Gain --
    ------------------
-
-   --  Battery gain is 1.0 when battery voltage is minimum
-   --  and 0.667 when battery voltage is maximum.
 
    function Battery_Gain
      (V_Setpoint : Battery_V_Range := Battery_V_Range'First;
@@ -129,14 +112,16 @@ package body Inverter_ADC is
    return Gain_Range is
 
    begin
-      if (V_Actual / Battery_Relation < Battery_V_Range'First)
+      if (V_Actual / Battery_Relation < Battery_V_Range'First) or
+        (V_Actual / Battery_Relation > Battery_V_Range'Last)
       then
+         --  Protect the inverter disabling the power stage.
+         Inverter_PWM.Safe_State;
          return 0.0;
-      elsif (V_Actual / Battery_Relation > Battery_V_Range'Last)
-      then
-         return 1.0;
+         --  Call other routine to visually indicate that the power stage was
+         --  disabled.
       else
-         return V_Setpoint / V_Actual * Battery_Relation;
+         return V_Setpoint / V_Actual;
       end if;
    end Battery_Gain;
 

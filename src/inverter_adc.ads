@@ -18,13 +18,14 @@ package Inverter_ADC is
 
    ADC_Vref : constant Voltage := 3.3;
    --  ADC full scale voltage.
+   ADC_V_Per_Lsb : constant Float := ADC_Vref / 4_095.0; --  12 bit
 
    Battery_V : constant Voltage := 12.0;
    --  Battery nominal voltage.
-   subtype Battery_V_Range is Voltage range (Battery_V * 0.8) .. (Battery_V * 1.2);
-   --  Battery voltage tolerance is Battery_V ± 20%.
+   subtype Battery_V_Range is Voltage range (Battery_V * 0.85) .. (Battery_V * 1.2);
+   --  Battery voltage tolerance is Battery_V -15% to +20% (10.2 to 14.4 V).
 
-   Battery_Relation : Float := 10_000.0 / 90_900.0; -- 10 kΩ / 90.9 kΩ
+   Battery_Relation : Float := 10_000.0 / (100_000.0 + 10_000.0);
    --  Resistive relation between the measured ADC input and the battery
    --  voltage. This depends on the electronic circuitry.
 
@@ -65,8 +66,9 @@ package Inverter_ADC is
    function Battery_Gain
      (V_Setpoint : Battery_V_Range := Battery_V_Range'First;
       V_Actual   : Voltage := Get_Sample (V_Battery)) return Gain_Range;
-   --  Calculate the gain of the sinusoid as a function of the
-   --  battery voltage.
+   --  Calculate the gain of the sinusoid as a function of the battery voltage.
+   --  The battery gain is 1 when battery voltage is minimum, and 0.85/1.2 =
+   --  0.708 when battery voltage is maximum.
 
    function Test_V_Battery return Boolean
    with
@@ -88,8 +90,6 @@ package Inverter_ADC is
 private
 
    Initialized : Boolean := False;
-
-   ADC_V_Per_Lsb : constant Float := ADC_Vref / 4_095.0; --  12 bit
 
    type Regular_Samples_Array is array (ADC_Reading'Range) of UInt16;
    for Regular_Samples_Array'Component_Size use 16;
