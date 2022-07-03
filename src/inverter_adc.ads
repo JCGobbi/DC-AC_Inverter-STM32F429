@@ -43,7 +43,7 @@ package Inverter_ADC is
    subtype Output_V_Range is Voltage range (Output_V * 0.9) .. (Output_V * 1.1);
    --  AC ouput voltage tolerance is Output_V ± 10%.
 
-   Output_Relation : Float :=  10_000.0 / 90_900.0; -- 10 kΩ / 90.9 kΩ
+   Output_Relation : Float := 10_000.0 / (100_000.0 + 10_000.0);
    --  Resistive relation between the measured ADC input and the AC output
    --  voltage. This depends on the electronic circuitry.
 
