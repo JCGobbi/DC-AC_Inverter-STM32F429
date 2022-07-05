@@ -3,7 +3,6 @@ with STM32.Timers; use STM32.Timers;
 with STM32.PWM;    use STM32.PWM;
 
 with STM_Board;    use STM_Board;
-with Inverter_ADC;
 
 package Inverter_PWM is
 
@@ -95,10 +94,16 @@ package Inverter_PWM is
        Value : Duty_Cycle);
    --  Sets the duty cycle in percent for the specified phase.
 
+   subtype Gain_Range is Float range 0.0 .. 1.0;
+   --  For correcting battery voltage and AC output variation.
+
+   procedure Set_Sine_Gain (Value : Gain_Range);
+   --  Securelly sets the value of the sine wave gain.
+
    procedure Set_Duty_Cycle
       (This      : PWM_Phase;
        Amplitude : Table_Amplitude;
-       Gain      : Inverter_ADC.Gain_Range);
+       Gain      : Gain_Range);
    --  Sets the duty cycle for the specified phase.
 
    procedure Set_PWM_Gate_Power (Enabled : in Boolean)
@@ -202,10 +207,14 @@ private
    protected PWM_Handler is
       pragma Interrupt_Priority (PWM_ISR_Priority);
 
+      procedure Update_Sine_Gain (Value : Gain_Range);
    private
 
       Counter : Integer := 0;
       --  For testing the output.
+
+      Sine_Gain : Gain_Range := 0.0;
+      --  Defines the gain of the sinusoid according to the battery voltage.
 
       Semi_Senoid : Boolean := False;
       --  Defines False = 1'st half sinusoid, True = 2'nd half sinusoid.

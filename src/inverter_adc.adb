@@ -1,6 +1,5 @@
-with STM32.Device;         use STM32.Device;
-with STM32.PWM;            use STM32.PWM;
-with Inverter_PWM;
+with STM32.Device; use STM32.Device;
+with STM32.PWM;    use STM32.PWM;
 
 package body Inverter_ADC is
 
@@ -99,7 +98,7 @@ package body Inverter_ADC is
       return Voltage is
    begin
       --  Convert the UInt16 ADC value to Voltage (Float).
-      return Voltage (Float (Regular_Samples (Reading)) * ADC_V_Per_Lsb);
+      return Voltage (Float (Sensor_Handler.Get_Regular_Samples (Reading)) * ADC_V_Per_Lsb);
    end Get_Sample;
 
    ------------------
@@ -184,6 +183,14 @@ package body Inverter_ADC is
 
    protected body Sensor_Handler is
 
+      -------------------------
+      -- Get_Regular_Samples --
+      -------------------------
+      function Get_Regular_Samples return Regular_Samples_Array is
+      begin
+         return Regular_Samples;
+      end Get_Regular_Samples;
+
       ------------------------
       -- Sensor_ISR_Handler --
       ------------------------
@@ -203,16 +210,17 @@ package body Inverter_ADC is
                end if;
 
                --  Calculate the new Sine_Gain based on battery voltage
-               Sine_Gain := Battery_Gain;
+               --  Set_Sine_Gain (Battery_Gain);
+               --  Actually is disabled because there is no signal at the ADC.
 
-            --  Testing the 5 kHz output with 1 Hz LED blinking. Because there
-            --  are three regular channel conversions, this frequency will be
-            --  three times greater.
-               if Counter = 2_500 then
-                  Set_Toggle (Blue_LED);
-                  Counter := 0;
-               end if;
-               Counter := Counter + 1;
+               --  Testing the 5 kHz output with 1 Hz LED blinking. Because there
+               --  are three regular channel conversions, this frequency will be
+               --  three times greater.
+               -- if Counter = 2_500 then
+               --    Set_Toggle (Blue_LED);
+               --    Counter := 0;
+               -- end if;
+               -- Counter := Counter + 1;
 
             end if;
          end if;

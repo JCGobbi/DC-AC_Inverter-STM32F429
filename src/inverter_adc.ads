@@ -3,6 +3,7 @@ with STM32.GPIO;   use STM32.GPIO;
 with STM32.ADC;    use STM32.ADC;
 
 with STM_Board;    use STM_Board;
+with Inverter_PWM; use Inverter_PWM;
 
 package Inverter_ADC is
    --  Performs analog to digital conversions in a timed manner.
@@ -55,13 +56,8 @@ package Inverter_ADC is
    --  Initialize the ADCs.
 
    function Get_Sample (Reading : in ADC_Reading) return Voltage
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Get the specified ADC reading.
-
-   subtype Gain_Range is Float range 0.0 .. 1.0;
-   --  For correcting battery voltage and AC output variation.
-   Sine_Gain : Gain_Range := 0.0;
 
    function Battery_Gain
      (V_Setpoint : Battery_V_Range := Battery_V_Range'First;
@@ -71,18 +67,15 @@ package Inverter_ADC is
    --  0.708 when battery voltage is maximum.
 
    function Test_V_Battery return Boolean
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Test if battery voltage is between maximum and minimum.
 
    function Test_I_Battery return Boolean
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Test if battery current is below maximum.
 
    function Test_V_Output return Boolean
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Test if output voltage is between maximum and minimum.
 
    function Is_Initialized return Boolean;
@@ -91,10 +84,8 @@ private
 
    Initialized : Boolean := False;
 
-   type Regular_Samples_Array is array (ADC_Reading'Range) of UInt16;
-   for Regular_Samples_Array'Component_Size use 16;
-
-   Regular_Samples : Regular_Samples_Array := (others => 0) with Volatile;
+   type Regular_Samples_Array is array (ADC_Reading'Range) of UInt16
+     with Component_Size => 16;
 
    type ADC_Settings is record
       GPIO_Entry   : GPIO_Point;
@@ -118,9 +109,13 @@ private
    protected Sensor_Handler is
       pragma Interrupt_Priority (Sensor_ISR_Priority);
 
+      function Get_Regular_Samples return Regular_Samples_Array;
    private
 
       Rank : ADC_Reading := ADC_Reading'First;
+
+      Regular_Samples : Regular_Samples_Array := (others => 0)
+        with Volatile;
 
       Counter : Integer := 0;
       --  For testing the output.

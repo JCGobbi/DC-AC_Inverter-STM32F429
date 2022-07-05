@@ -23,7 +23,7 @@ begin
    PWM_Frequency_Hz := 30_000.0;
 
    --  Select gain = 1.0 to see only sine table sinusoid
-   Sine_Gain := 1.0;
+   Set_Sine_Gain (1.0);
 
    --  Disable PWM gate drivers because some gate drivers enable with
    --  low level.

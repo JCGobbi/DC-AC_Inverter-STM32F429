@@ -26,6 +26,9 @@ package body StartUp is
          PWM_Frequency_Hz := 30_000.0;
       end if;
 
+      --  Select gain = 1.0 to see only sine table sinusoid
+      Set_Sine_Gain (1.0);
+
       --  Initialize sensors ADC
       Initialize_ADC;
 

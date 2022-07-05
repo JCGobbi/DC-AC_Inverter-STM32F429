@@ -2,8 +2,8 @@
 with Ada.Real_Time; use Ada.Real_Time;
 
 with StartUp;
-with STM_Board;     use STM_Board;
-with Inverter_PWM;
+with STM_Board;    use STM_Board;
+with Inverter_PWM; use Inverter_PWM;
 
 with Last_Chance_Handler; pragma Unreferenced (Last_Chance_Handler);
 --  The "last chance handler" is the user-defined routine that is called when
@@ -26,10 +26,10 @@ begin
    end loop;
 
    --  Enable PWM gate drivers
-   Inverter_PWM.Set_PWM_Gate_Power (True);
+   Set_PWM_Gate_Power (True);
 
    --  Start generating the sinusoid
-   Inverter_PWM.Start_PWM;
+   Start_PWM;
 
    --  Enter steady state
    loop
