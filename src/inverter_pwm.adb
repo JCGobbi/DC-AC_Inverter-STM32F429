@@ -143,7 +143,7 @@ package body Inverter_PWM is
 
    procedure Set_Sine_Gain (Value : Gain_Range) is
    begin
-      PWM_Handler.Update_Sine_Gain (Value);
+      Sine_Gain := Value;
    end Set_Sine_Gain;
 
    --------------------
@@ -297,15 +297,6 @@ package body Inverter_PWM is
    -----------------
 
    protected body PWM_Handler is
-
-      ----------------------
-      -- Update_Sine_Gain --
-      ----------------------
-
-      procedure Update_Sine_Gain (Value : Gain_Range) is
-      begin
-         Sine_Gain := Value;
-      end Update_Sine_Gain;
 
       ---------------------
       -- PWM_ISR_Handler --

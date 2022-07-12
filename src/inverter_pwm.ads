@@ -204,17 +204,16 @@ private
                             Pin_L   => PWM_B_L_Pin,
                             Pin_AF  => PWM_B_GPIO_AF));
 
+   Sine_Gain : Gain_Range := 0.0;
+   --  Defines the gain of the sinusoid according to the battery voltage.
+
    protected PWM_Handler is
       pragma Interrupt_Priority (PWM_ISR_Priority);
 
-      procedure Update_Sine_Gain (Value : Gain_Range);
    private
 
       Counter : Integer := 0;
       --  For testing the output.
-
-      Sine_Gain : Gain_Range := 0.0;
-      --  Defines the gain of the sinusoid according to the battery voltage.
 
       Semi_Senoid : Boolean := False;
       --  Defines False = 1'st half sinusoid, True = 2'nd half sinusoid.
