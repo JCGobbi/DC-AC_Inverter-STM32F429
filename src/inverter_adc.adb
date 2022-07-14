@@ -205,22 +205,23 @@ package body Inverter_ADC is
                Regular_Samples (Rank) := Conversion_Value (Sensor_ADC.all);
                if Rank = ADC_Reading'Last then
                   Rank := ADC_Reading'First;
-               else
-                  Rank := ADC_Reading'Succ (Rank);
-               end if;
 
                --  Calculate the new Sine_Gain based on battery voltage
                --  Set_Sine_Gain (Battery_Gain);
                --  Actually is disabled because there is no signal at the ADC.
 
+               else
+                  Rank := ADC_Reading'Succ (Rank);
+               end if;
+
                --  Testing the 5 kHz output with 1 Hz LED blinking. Because there
                --  are three regular channel conversions, this frequency will be
                --  three times greater.
-               -- if Counter = 2_500 then
-               --    Set_Toggle (Blue_LED);
-               --    Counter := 0;
-               -- end if;
-               -- Counter := Counter + 1;
+               --  if Counter = 2_500 then
+               --     Set_Toggle (Blue_LED);
+               --     Counter := 0;
+               --  end if;
+               --  Counter := Counter + 1;
 
             end if;
          end if;
