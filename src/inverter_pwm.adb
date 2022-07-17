@@ -27,7 +27,7 @@ package body Inverter_PWM is
       Configure_PWM_Timer (Generator    => PWM_Timer_Ref,
                            Frequency    => UInt32 (Frequency));
 
-      Set_Counter_Mode (This => PWM_Timer_Ref.all,
+      Set_Counter_Mode (PWM_Timer_Ref.all,
                         Value => Counter_Mode);
 
       Configure_BDTR (This                          => PWM_Timer_Ref.all,
@@ -52,7 +52,7 @@ package body Inverter_PWM is
             Complementary_Polarity   => High,
             Complementary_Idle_State => Disable);
 
-         Set_Output_Preload_Enable (This    => PWM_Timer_Ref.all,
+         Set_Output_Preload_Enable (PWM_Timer_Ref.all,
                                     Channel => Gate_Phase_Settings (P).Channel,
                                     Enabled => True);
       end loop;
@@ -64,20 +64,20 @@ package body Inverter_PWM is
    -- Enable_Phase --
    ------------------
 
-   procedure Enable_Phase (This : PWM_Phase) is
+   procedure Enable_Phase (Phase : PWM_Phase) is
    begin
-      Modulators (This).Enable_Output;
-      Modulators (This).Enable_Complementary_Output;
+      Modulators (Phase).Enable_Output;
+      Modulators (Phase).Enable_Complementary_Output;
    end Enable_Phase;
 
    -------------------
    -- Disable_Phase --
    -------------------
 
-   procedure Disable_Phase (This : PWM_Phase) is
+   procedure Disable_Phase (Phase : PWM_Phase) is
    begin
-      Modulators (This).Disable_Output;
-      Modulators (This).Disable_Complementary_Output;
+      Modulators (Phase).Disable_Output;
+      Modulators (Phase).Disable_Complementary_Output;
    end Disable_Phase;
 
    ---------------
@@ -88,11 +88,11 @@ package body Inverter_PWM is
    begin
       Reset_Sine_Step;
       for P in PWM_Phase'Range loop
-         Set_Duty_Cycle (This  => P,
+         Set_Duty_Cycle (Phase => P,
                          Value => 0.0);
          Enable_Phase (P);
       end loop;
-      Enable_Interrupt (This   => PWM_Timer_Ref.all,
+      Enable_Interrupt (PWM_Timer_Ref.all,
                         Source => Timer_Update_Interrupt);
    end Start_PWM;
 
@@ -102,11 +102,11 @@ package body Inverter_PWM is
 
    procedure Stop_PWM is
    begin
-      Disable_Interrupt (This   => PWM_Timer_Ref.all,
-                        Source => Timer_Update_Interrupt);
+      Disable_Interrupt (PWM_Timer_Ref.all,
+                         Source => Timer_Update_Interrupt);
       for P in PWM_Phase'Range loop
          Disable_Phase (P);
-         Set_Duty_Cycle (This  => P,
+         Set_Duty_Cycle (Phase => P,
                          Value => 0.0);
       end loop;
       Reset_Sine_Step;
@@ -125,15 +125,15 @@ package body Inverter_PWM is
    -- Set_Duty_Cycle --
    --------------------
 
-   procedure Set_Duty_Cycle (This  : PWM_Phase;
+   procedure Set_Duty_Cycle (Phase : PWM_Phase;
                              Value : Duty_Cycle)
    is
       Pulse : UInt16;
    begin
       Pulse := UInt16 (Value * Float (Current_Autoreload (PWM_Timer_Ref.all)) / 100.0);
       Set_Compare_Value
-        (This => PWM_Timer_Ref.all,
-         Channel => Gate_Phase_Settings (This).Channel,
+        (PWM_Timer_Ref.all,
+         Channel => Gate_Phase_Settings (Phase).Channel,
          Value => Pulse);
    end Set_Duty_Cycle;
 
@@ -150,7 +150,7 @@ package body Inverter_PWM is
    -- Set_Duty_Cycle --
    --------------------
 
-   procedure Set_Duty_Cycle (This      : PWM_Phase;
+   procedure Set_Duty_Cycle (Phase     : PWM_Phase;
                              Amplitude : Table_Amplitude;
                              Gain      : Gain_Range)
    is
@@ -159,8 +159,8 @@ package body Inverter_PWM is
       Pulse := UInt16 (Gain * Float (Amplitude) / Float (Table_Amplitude'Last) *
                        Float (Current_Autoreload (PWM_Timer_Ref.all)));
       Set_Compare_Value
-        (This => PWM_Timer_Ref.all,
-         Channel => Gate_Phase_Settings (This).Channel,
+        (PWM_Timer_Ref.all,
+         Channel => Gate_Phase_Settings (Phase).Channel,
          Value => Pulse);
    end Set_Duty_Cycle;
 
@@ -309,19 +309,19 @@ package body Inverter_PWM is
                Clear_Pending_Interrupt (PWM_Timer, Timer_Update_Interrupt);
 
                if (Semi_Senoid = False) then --  First half cycle
-                  Set_Duty_Cycle (This      => A,
+                  Set_Duty_Cycle (Phase     => A,
                                   Amplitude => Sine_Table (Sine_Step),
                                   Gain      => Sine_Gain);
                   --  Not necessary because the last value of B amplitude was 0
-                  --  Set_Duty_Cycle (This      => B,
+                  --  Set_Duty_Cycle (Phase     => B,
                   --                  Amplitude => Table_Amplitude'Last, --  Value 0
                   --                  Gain      => Gain_Range'First); --  Value 0
                else --  Second half cycle
-                  Set_Duty_Cycle (This      => B,
+                  Set_Duty_Cycle (Phase     => B,
                                   Amplitude => Sine_Table (Sine_Step),
                                   Gain      => Sine_Gain);
                   --  Not necessary because the last value of A amplitude was 0
-                  --  Set_Duty_Cycle (This      => A,
+                  --  Set_Duty_Cycle (Phase     => A,
                   --                  Amplitude => Table_Amplitude'Last, --  Value 0
                   --                  Gain      => Gain_Range'First); --  Value 0
                end if;

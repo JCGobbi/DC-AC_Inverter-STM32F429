@@ -15,8 +15,8 @@ package Inverter_PWM is
 
    type PWM_Alignment is
       (Edge, --  Positive edge
-       Center --  Center of positive part
-      );
+       Center); --  Center of positive part
+
    --  Describes where on the PWM waveform the signals shall be aligned.
 
    --  The final maximum amplitude for the sine voltage is defined by the
@@ -68,29 +68,27 @@ package Inverter_PWM is
    --  Initialize the timer peripheral for PWM.
    --  Each phase needs to be enabled manually after this.
 
-   procedure Enable_Phase (This : PWM_Phase)
-   with inline;
+   procedure Enable_Phase (Phase : PWM_Phase)
+     with Inline;
    --  Enable PWM generation for the specified phase.
 
-   procedure Disable_Phase (This : PWM_Phase)
-   with inline;
+   procedure Disable_Phase (Phase : PWM_Phase)
+     with Inline;
    --  Disable PWM generation for the specified phase.
 
    procedure Start_PWM
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Start the generation of sinusoid wave by enabling interrupt.
 
    procedure Stop_PWM
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Stop the generation of sinusoid wave by disabling interrupt.
 
    function Get_Duty_Resolution return Duty_Cycle;
    --  Return the minimum step that the duty can be changed, in percent.
 
    procedure Set_Duty_Cycle
-      (This  : PWM_Phase;
+      (Phase : PWM_Phase;
        Value : Duty_Cycle);
    --  Sets the duty cycle in percent for the specified phase.
 
@@ -101,15 +99,14 @@ package Inverter_PWM is
    --  Securelly sets the value of the sine wave gain.
 
    procedure Set_Duty_Cycle
-      (This      : PWM_Phase;
+      (Phase     : PWM_Phase;
        Amplitude : Table_Amplitude;
        Gain      : Gain_Range);
    --  Sets the duty cycle for the specified phase.
 
    procedure Set_PWM_Gate_Power (Enabled : in Boolean)
-   with
-      Pre => (if Enabled = False then STM_Board.Is_Initialized
-              else Is_Initialized and STM_Board.Is_Initialized);
+     with Pre => (if Enabled = False then STM_Board.Is_Initialized
+                  else Is_Initialized and STM_Board.Is_Initialized);
    --  Enable or disable the output of the gate drivers.
 
    procedure Reset_Sine_Step;
@@ -195,14 +192,14 @@ private
    type Gate_Settings is array (PWM_Phase'Range) of Gate_Setting;
 
    Gate_Phase_Settings : constant Gate_Settings :=
-      ((A) => Gate_Setting'(Channel => PWM_A_Channel,
-                            Pin_H   => PWM_A_H_Pin,
-                            Pin_L   => PWM_A_L_Pin,
-                            Pin_AF  => PWM_A_GPIO_AF),
-       (B) => Gate_Setting'(Channel => PWM_B_Channel,
-                            Pin_H   => PWM_B_H_Pin,
-                            Pin_L   => PWM_B_L_Pin,
-                            Pin_AF  => PWM_B_GPIO_AF));
+      (A => Gate_Setting'(Channel => PWM_A_Channel,
+                          Pin_H   => PWM_A_H_Pin,
+                          Pin_L   => PWM_A_L_Pin,
+                          Pin_AF  => PWM_A_GPIO_AF),
+       B => Gate_Setting'(Channel => PWM_B_Channel,
+                          Pin_H   => PWM_B_H_Pin,
+                          Pin_L   => PWM_B_L_Pin,
+                          Pin_AF  => PWM_B_GPIO_AF));
 
    Sine_Gain : Gain_Range := 0.0;
    --  Defines the gain of the sinusoid according to the battery voltage.
