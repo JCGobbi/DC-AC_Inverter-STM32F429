@@ -20,7 +20,7 @@ package STM_Board is
    PWM_Timer        : Timer renames Timer_1;
    --  Timer for reading sine table values.
    PWM_Interrupt    : Ada.Interrupts.Interrupt_ID renames TIM1_UP_TIM10_Interrupt;
-   PWM_ISR_Priority : constant Interrupt_Priority := Interrupt_Priority'Last - 3;
+   PWM_ISR_Priority : constant Interrupt_Priority := Interrupt_Priority'Last - 2;
 
    PWM_A_Channel : Timer_Channel renames Channel_1;
    PWM_A_H_Pin   : GPIO_Point renames PE9;
@@ -42,7 +42,7 @@ package STM_Board is
    Sensor_ADC           : constant access Analog_To_Digital_Converter := ADC_3'Access;
    Sensor_Trigger_Event : External_Events_Regular_Group := Timer3_CC1_Event;
    Sensor_Interrupt     : Ada.Interrupts.Interrupt_ID renames ADC_Interrupt;
-   Sensor_ISR_Priority  : constant Interrupt_Priority := Interrupt_Priority'Last - 2;
+   Sensor_ISR_Priority  : constant Interrupt_Priority := Interrupt_Priority'Last - 3;
 
    ADC_Battery_V_Point : constant ADC_Point := (Sensor_ADC, Channel => 5);
    ADC_Battery_V_Pin   : GPIO_Point renames PF7;
@@ -61,7 +61,7 @@ package STM_Board is
    --  by any of TIM1, TIM2, TIM3, TIM4, TIM5, or TIM8 timer.
    Sensor_Timer              : Timer renames Timer_3;
    Sensor_Timer_Interrupt    : Ada.Interrupts.Interrupt_ID renames TIM3_Interrupt;
-   Sensor_Timer_ISR_Priority : constant Interrupt_Priority := Interrupt_Priority'Last - 2;
+   Sensor_Timer_ISR_Priority : constant Interrupt_Priority := Interrupt_Priority'Last - 3;
 
    --  Channel for reading analog inputs (5 kHz, 200 us)
    Sensor_Timer_Channel : Timer_Channel renames Channel_1;
@@ -100,38 +100,31 @@ package STM_Board is
    --  Initialize GPIO inputs and outputs.
 
    function Read_AC_Frequency return Boolean
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Read AC frequency selection into global variable.
 
    procedure Turn_On (This : in out GPIO_Point)
-   with
-      Pre => Is_Initialized and (This /= PWM_Gate_Power);
+     with Pre => Is_Initialized and (This /= PWM_Gate_Power);
    --  Turns ON the specified output.
 
    procedure Turn_Off (This : in out GPIO_Point)
-   with
-      Pre => Is_Initialized and (This /= PWM_Gate_Power);
+     with Pre => Is_Initialized and (This /= PWM_Gate_Power);
    --  Turns OFF the specified output.
 
    procedure Set_Toggle (This : in out GPIO_Point)
-   with
-      Pre => Is_Initialized and (This /= PWM_Gate_Power);
+     with Pre => Is_Initialized and (This /= PWM_Gate_Power);
    --  Toggle the specified output.
 
    procedure All_LEDs_Off
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Turns OFF all LEDs.
 
    procedure All_LEDs_On
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Turns ON all LEDs.
 
    procedure Toggle_LEDs (These : in out GPIO_Points)
-   with
-      Pre => Is_Initialized;
+     with Pre => Is_Initialized;
    --  Toggle the specified LEDs.
 
    function Is_Initialized return Boolean;
