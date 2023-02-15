@@ -9,7 +9,7 @@
       {
          "label": "Ada: gprbuild check syntax active file",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/gprbuild",
+         "command": "gprbuild",
          "args": [
             "-q",
             "-f",
@@ -32,7 +32,7 @@
       {
          "label": "Ada: gprbuild check semantic active file",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/gprbuild",
+         "command": "gprbuild",
          "args": [
             "-q",
             "-f",
@@ -55,7 +55,7 @@
       {
          "label": "Ada: gprbuild compile active file",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/gprbuild",
+         "command": "gprbuild",
          "args": [
             "-ws",
             "-f",
@@ -77,7 +77,7 @@
       {
          "label": "Ada: gprbuild build active project",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/gprbuild",
+         "command": "gprbuild",
          "args": [
             "-P",
             "*.gpr"
@@ -97,7 +97,7 @@
       {
          "label": "Ada: gprbuild clean active project",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/gprclean",
+         "command": "gprclean",
          "args": [
             "-r",
             "-P",
@@ -138,7 +138,7 @@
       {
          "label": "Ada: convert elf file to hex file",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/arm-eabi-objcopy",
+         "command": "arm-eabi-objcopy",
          "args": [
             "-S",
             "-O",
@@ -205,7 +205,7 @@
       {
          "label": "Ada: convert elf file to bin file",
          "type": "shell",
-         "command": "/opt/GNAT/gcc-arm-eabi/bin/arm-eabi-objcopy",
+         "command": "arm-eabi-objcopy",
          "args": [
             "-S",
             "-O",

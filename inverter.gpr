@@ -7,7 +7,6 @@ project Inverter is
 
    for Languages use ("Ada");
    for Target use Ada_Drivers_Library'Target;
-   for Runtime ("ada") use Ada_Drivers_Library'Runtime ("Ada");
 
    for Source_Dirs use ("src", "src/errors");
    for Object_Dir use "obj";
@@ -20,10 +19,10 @@ project Inverter is
 
    case RTS is
       when "ravenscar-sfp" =>
-         for Runtime ("Ada") use "ravenscar-sfp-stm32f429disco";
+         for Runtime ("Ada") use "light-tasking-stm32f429disco";
          for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_sfp");
       when "ravenscar-full" =>
-         for Runtime ("Ada") use "ravenscar-full-stm32f429disco";
+         for Runtime ("Ada") use "embedded-stm32f429disco";
          for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_full");
    end case;
 
@@ -31,7 +30,7 @@ project Inverter is
 
    package Builder is
       for Global_Configuration_Pragmas use "gnat.adc";
-      for Executable("main.adb") use "inverter";
+      for Executable ("main.adb") use "inverter";
       for Executable_Suffix use ".elf";
    end Builder;
 
