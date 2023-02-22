@@ -60,8 +60,7 @@ library project Ada_Drivers_Library is
    for Library_Name use "ada_drivers_library";
 
    Linker_Switches := ();
-   for Target use "arm-eabi";
-   for Runtime ("Ada") use Project'Runtime ("Ada");
+   --  for Runtime ("Ada") use Project'Runtime ("Ada");
 
    package Device_Configuration is
       for CPU_Name use "ARM Cortex-M4F";
