@@ -162,6 +162,7 @@
          "type": "shell",
          "command": "st-flash",
          "args": [
+            "--connect-under-reset",
             "--reset",
             "--format",
             "ihex",
@@ -229,6 +230,7 @@
          "type": "shell",
          "command": "st-flash",
          "args": [
+            "--connect-under-reset",
             "--reset",
             "--format",
             "binary",
