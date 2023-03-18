@@ -17,7 +17,7 @@
             "-gnats",
             "-u",
             "-P",
-            "*.gpr",
+            "${config:ada.projectFile}",
             "${file}"
          ],
          "options": {
@@ -40,7 +40,7 @@
             "-gnatc",
             "-u",
             "-P",
-            "*.gpr",
+            "${config:ada.projectFile}",
             "${file}"
          ],
          "options": {
@@ -62,7 +62,7 @@
             "-c",
             "-u",
             "-P",
-            "*.gpr",
+            "${config:ada.projectFile}",
             "${file}"
          ],
          "options": {
@@ -80,7 +80,7 @@
          "command": "gprbuild",
          "args": [
             "-P",
-            "*.gpr"
+            "${config:ada.projectFile}"
          ],
          "options": {
             "cwd": "${workspaceFolder}"
@@ -101,7 +101,7 @@
          "args": [
             "-r",
             "-P",
-            "*.gpr"
+            "${config:ada.projectFile}"
          ],
          "options": {
             "cwd": "${workspaceFolder}"
@@ -115,7 +115,7 @@
       {
          "label": "Ada: flash elf file to board with STM32CubeProgrammer",
          "type": "shell",
-         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -123,11 +123,11 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/*.elf",
+            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
             "-rst"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -143,11 +143,11 @@
             "-S",
             "-O",
             "ihex",
-            "exec/*.elf",
-            "exec/main.hex"
+            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
+            "exec/${config:ada.scenarioVariables.binaryFile}.hex"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -167,10 +167,10 @@
             "--format",
             "ihex",
             "write",
-            "exec/main.hex"
+            "exec/${config:ada.scenarioVariables.binaryFile}.hex"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -183,7 +183,7 @@
          "dependsOrder": "sequence",
          "dependsOn": ["Ada: convert elf file to hex file"],
          "type": "shell",
-         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -191,11 +191,11 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/main.hex",
+            "exec/${config:ada.scenarioVariables.binaryFile}.hex",
             "-rst"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -211,11 +211,11 @@
             "-S",
             "-O",
             "binary",
-            "exec/*.elf",
-            "exec/main.bin"
+            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
+            "exec/${config:ada.scenarioVariables.binaryFile}.bin"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -235,11 +235,11 @@
             "--format",
             "binary",
             "write",
-            "exec/main.bin",
+            "exec/${config:ada.scenarioVariables.binaryFile}.bin",
             "0x08000000"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
@@ -252,7 +252,7 @@
          "dependsOrder": "sequence",
          "dependsOn": ["Ada: convert elf file to hex file"],
          "type": "shell",
-         "command": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -260,12 +260,12 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/main.bin",
+            "exec/${config:ada.scenarioVariables.binaryFile}.bin",
             "0x08000000",
             "-rst"
          ],
          "options": {
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
          },
          "group": "test",
          "problemMatcher": []
