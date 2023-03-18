@@ -30,6 +30,7 @@ project Inverter is
 
    package Builder is
       for Global_Configuration_Pragmas use "gnat.adc";
+      for Executable ("demo_inverter.adb") use "demo_inverter";
       for Executable ("main.adb") use "inverter";
       for Executable_Suffix use ".elf";
    end Builder;
