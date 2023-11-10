@@ -40,7 +40,7 @@ package STM_Board is
    ------------------------------
 
    Sensor_ADC           : constant access Analog_To_Digital_Converter := ADC_3'Access;
-   Sensor_Trigger_Event : External_Events_Regular_Group := Timer3_CC1_Event;
+   Sensor_Trigger_Event : External_Events_Regular_Group renames Timer3_CC1_Event;
    Sensor_Interrupt     : Ada.Interrupts.Interrupt_ID renames ADC_Interrupt;
    Sensor_ISR_Priority  : constant Interrupt_Priority := Interrupt_Priority'Last - 3;
 
