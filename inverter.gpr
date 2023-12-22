@@ -2,8 +2,8 @@ with "Ada_Drivers_Library/ada_drivers_library.gpr";
 
 project Inverter is
 
-   type RTS_Type is ("ravenscar-sfp", "ravenscar-full");
-   RTS : RTS_Type := External ("RTS_Profile", "ravenscar-sfp");
+   type RTS_Type is ("light-tasking", "embedded");
+   RTS : RTS_Type := External ("RTS_Profile", "light-tasking");
 
    for Languages use ("Ada");
    for Target use "arm-eabi";
@@ -18,12 +18,12 @@ project Inverter is
    for Main use ("main.adb");
 
    case RTS is
-      when "ravenscar-sfp" =>
+      when "light-tasking" =>
          for Runtime ("Ada") use "light-tasking-stm32f429disco";
-         for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_sfp");
-      when "ravenscar-full" =>
+         for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_light-tasking");
+      when "embedded" =>
          for Runtime ("Ada") use "embedded-stm32f429disco";
-         for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_full");
+         for Source_Dirs use Project'Source_Dirs & ("src/errors/lch_embedded");
    end case;
 
    package Compiler renames Ada_Drivers_Library.Compiler;
