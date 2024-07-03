@@ -10,13 +10,20 @@
     "editor.insertSpaces": true,
     "editor.rulers": [80, 100],
     "editor.detectIndentation": false,
+
+    // Set environment variables through the VS Code Workspace or User setting
+    // terminal.integrated.env.[linux|windows|osx] depending on your platform.
+    "terminal.integrated.env.linux": {
+      "PATH": "/opt/GNAT/gnat-arm-elf/bin:/opt/GNAT/x86_64/bin:/opt/GNAT/gnatprove/bin:${env:PATH}",
+      "GPR_PROJECT_PATH": ""
+    },
+
     "ada.defaultCharset": "UTF-8",
-    
     "ada.projectFile": "inverter.gpr",
     "ada.scenarioVariables": {
       "projectFolder": "",
       "binaryFile": "inverter",
-      "STM32ProgFolder": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/"
       // Leave empty if STM32CubeProgrammer is in your PATH
+      "STM32ProgFolder": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/"
     }
 }
