@@ -1,0 +1,128 @@
+{
+   //FOLDERS
+   "folders":
+   [
+      {
+         "path": "..",
+      }
+   ],
+   //SETTINGS
+   "settings":
+   {
+      "tab_size": 3,
+      "translate_tabs_to_spaces": true,
+      "rulers": [[80, "solid", 1], [100, "solid", 1]],
+      "project_environment": {
+         "print_output": true,
+         "set_sublime_variables": "true",
+         // Environment variables for your project
+         "env": {
+            "projectFolder": "$project_path/..",
+            "projectFile": "inverter.gpr",
+            "binaryFolder": "exec",
+            "binaryFile": "inverter",
+         },
+         // Environment variables for your operating system: linux, windows or osx
+         "linux": {
+            "env": {
+               "PATH": "/opt/GNAT/gnat-arm-elf/bin:/opt/GNAT/x86_64/bin:/opt/GNAT/gnatprove/bin:$PATH",
+               // Leave empty if STM32CubeProgrammer is in your PATH
+               "STM32ProgFolder": "/opt/STMicroelectronics/STM32CubeProgrammer/bin"
+            },
+         },
+      },
+   },
+   //BUILD_SYSTEMS
+   "build_systems":
+   [
+      {
+         "name": "Ada Build (Project)",
+         "shell_cmd": "",
+         "working_dir": "$projectFolder",
+         "file_regex": "^(.*?):([0-9]+):([0-9]+):\\s*(.*)$",
+         "selector": "source.ada",
+         "variants": [
+            {
+               "name": "Ada: gprbuild check semantic active file",
+               "shell_cmd": "gprbuild -q -f -c -gnatc -u -P \\$projectFolder/\\$projectFile $file",
+            },
+            {
+               "name": "Ada: gprbuild check syntax active file",
+               "shell_cmd": "gprbuild -q -f -c -gnats -u -P \\$projectFolder/\\$projectFile $file",
+            },
+            {
+               "name": "Ada: gprbuild compile active file",
+               "shell_cmd": "gprbuild -ws -f -c -u -P \\$projectFolder/\\$projectFile $file",
+            },
+            {
+               "name": "Ada: gprbuild build current project",
+               "shell_cmd": "gprbuild -P \\$projectFolder/\\$projectFile",
+            },
+            {
+               "name": "Ada: gprbuild clean current project",
+               "shell_cmd": "gprclean -r -P \\$projectFolder/\\$projectFile",
+            },
+            {
+               "name": "Ada: flash elf file to board with STM32CubeProgrammer",
+               "shell_cmd": "\\$STM32ProgFolder/STM32_Programmer_CLI --connect port=SWD freq=4000 ap=0 mode=UR --write \\$projectFolder/\\$binaryFolder/\\$binaryFile.elf -rst",
+            },
+            {
+               "name": "Ada: flash hex file to board with STM32CubeProgrammer",
+               "shell_cmd": "\\$STM32ProgFolder/STM32_Programmer_CLI --connect port=SWD freq=4000 ap=0 mode=UR --write \\$projectFolder/\\$binaryFolder/\\$binaryFile.hex -rst",
+            },
+            {
+               "name": "Ada: flash bin file to board with STM32CubeProgrammer",
+               "shell_cmd": "\\$STM32ProgFolder/STM32_Programmer_CLI --connect port=SWD freq=4000 ap=0 mode=UR --write \\$projectFolder/\\$binaryFolder/\\$binaryFile.bin 0x08000000 -rst",
+            },
+            {
+               "name": "Ada: flash hex file to board with st-link",
+               "shell_cmd": "st-flash --connect-under-reset --reset --format ihex write \\$projectFolder/\\$binaryFolder/\\$binaryFile.hex",
+            },
+            {
+               "name": "Ada: flash bin file to board with st-link",
+               "shell_cmd": "st-flash --connect-under-reset --reset --format binary write \\$projectFolder/\\$binaryFolder/\\$binaryFile.bin 0x08000000",
+            },
+            {
+               "name": "Ada: convert elf file to hex file",
+               "shell_cmd": "arm-eabi-objcopy -S -O ihex \\$projectFolder/\\$binaryFolder/\\$binaryFile.elf \\$projectFolder/\\$binaryFolder/\\$binaryFile.hex",
+            },
+            {
+               "name": "Ada: convert elf file to bin file",
+               "shell_cmd": "arm-eabi-objcopy -S -O binary \\$projectFolder/\\$binaryFolder/\\$binaryFile.elf \\$projectFolder/\\$binaryFolder/\\$binaryFile.bin",
+            }
+         ]
+      }
+   ],
+   //DEBUGGER_TASKS
+   "debugger_tasks": [
+      {
+         "name": "Flash HEX file to board with ST-Link",
+         "working_dir": "${workspaceFolder}",
+         "shell_cmd": "st-flash --connect-under-reset --reset --format ihex write ./Four_Relay_Schield/exec/four_relay.hex",
+         "file_regex": "(..[^:]*):([0-9]+):([0-9]+)?:? error: (.*)",
+      },
+      {
+         "name": "Connect ST-Util Server to board",
+         "working_dir": "${workspaceFolder}",
+         "shell_cmd": "st-util --connect-under-reset --semihosting",
+         "file_regex": "(..[^:]*):([0-9]+):([0-9]+)?:? error: (.*)",
+      }
+   ],
+   //DEBUGGER_CONFIGURATIONS
+   "debugger_configurations": [
+      {
+         "name": "Ada: Debug (arm-eabi-gdb/ST-Util)",
+         "type": "gdb",
+         "request": "launch",
+         "cwd": "${workspaceFolder}",
+         "target": "./exec/inverter.elf",
+         "valuesFormatting": "parseText",
+         "MIMode": "gdb",
+         "miDebuggerPath": "arm-eabi-gdb",
+         "autorun": [
+            "tar extended-remote :4242",
+            "load"
+         ]
+      }
+   ]
+}
