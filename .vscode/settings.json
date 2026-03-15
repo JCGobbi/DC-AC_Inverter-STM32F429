@@ -15,15 +15,16 @@
     // terminal.integrated.env.[linux|windows|osx] depending on your platform.
     "terminal.integrated.env.linux": {
       "PATH": "/opt/GNAT/gnat-arm-elf/bin:/opt/GNAT/x86_64/bin:/opt/GNAT/gnatprove/bin:${env:PATH}",
-      "GPR_PROJECT_PATH": ""
+      "GPR_PROJECT_PATH": "",
+      // Leave empty if STM32CubeProgrammer is in your PATH
+      "STM32ProgFolder": "/opt/STMicroelectronics/STM32CubeProgrammer/bin"
     },
 
     "ada.defaultCharset": "UTF-8",
     "ada.projectFile": "inverter.gpr",
     "ada.scenarioVariables": {
       "projectFolder": "",
-      "binaryFile": "inverter",
-      // Leave empty if STM32CubeProgrammer is in your PATH
-      "STM32ProgFolder": "/opt/STMicroelectronics/STM32CubeProgrammer/bin/"
+      "binaryFolder": "exec",
+      "binaryFile": "inverter"
     }
 }

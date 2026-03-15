@@ -115,7 +115,7 @@
       {
          "label": "Ada: flash elf file to board with STM32CubeProgrammer",
          "type": "shell",
-         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
+         "command": "${config:terminal.integrated.env.linux.STM32ProgFolder}/STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -123,7 +123,7 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.elf",
             "-rst"
          ],
          "options": {
@@ -143,8 +143,8 @@
             "-S",
             "-O",
             "ihex",
-            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
-            "exec/${config:ada.scenarioVariables.binaryFile}.hex"
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.elf",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.hex"
          ],
          "options": {
             "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
@@ -167,7 +167,7 @@
             "--format",
             "ihex",
             "write",
-            "exec/${config:ada.scenarioVariables.binaryFile}.hex"
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.hex"
          ],
          "options": {
             "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
@@ -183,7 +183,7 @@
          "dependsOrder": "sequence",
          "dependsOn": ["Ada: convert elf file to hex file"],
          "type": "shell",
-         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
+         "command": "${config:terminal.integrated.env.linux.STM32ProgFolder}/STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -191,7 +191,7 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/${config:ada.scenarioVariables.binaryFile}.hex",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.hex",
             "-rst"
          ],
          "options": {
@@ -211,8 +211,8 @@
             "-S",
             "-O",
             "binary",
-            "exec/${config:ada.scenarioVariables.binaryFile}.elf",
-            "exec/${config:ada.scenarioVariables.binaryFile}.bin"
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.elf",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.bin"
          ],
          "options": {
             "cwd": "${workspaceFolder}/${config:ada.scenarioVariables.projectFolder}"
@@ -235,7 +235,7 @@
             "--format",
             "binary",
             "write",
-            "exec/${config:ada.scenarioVariables.binaryFile}.bin",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.bin",
             "0x08000000"
          ],
          "options": {
@@ -252,7 +252,7 @@
          "dependsOrder": "sequence",
          "dependsOn": ["Ada: convert elf file to hex file"],
          "type": "shell",
-         "command": "${config:ada.scenarioVariables.STM32ProgFolder}STM32_Programmer_CLI",
+         "command": "${config:terminal.integrated.env.linux.STM32ProgFolder}/STM32_Programmer_CLI",
          "args": [
             "--connect",
             "port=SWD",
@@ -260,7 +260,7 @@
             "ap=0",
             "mode=UR",
             "--write",
-            "exec/${config:ada.scenarioVariables.binaryFile}.bin",
+            "${config:ada.scenarioVariables.binaryFolder}/${config:ada.scenarioVariables.binaryFile}.bin",
             "0x08000000",
             "-rst"
          ],
